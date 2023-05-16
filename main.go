@@ -59,14 +59,7 @@ func branchExists(branchName string) bool {
 	return false
 }
 
-func main() {
-	args := os.Args[1:]
-	if len(args) != 1 || args[0] != "merge" {
-		fmt.Println("Usage: merge [branch]")
-		os.Exit(1)
-	}
-
-	currentBranch := getCurrentBranch()
+func mainMerge(currentBranch string) {
 	mergeBranch := ""
 
 	// mainブランチにいる場合
@@ -158,4 +151,26 @@ func main() {
 			os.Exit(1)
 		}
 	}
+}
+
+func mainFeature(currentBranch string) {
+	fmt.Printf("in mainFeature: %s\n", currentBranch)
+}
+
+func main() {
+	args := os.Args[1:]
+	if len(args) != 1 || (args[0] != "merge" && args[0] != "feature") {
+		fmt.Println("Usage: merge")
+		fmt.Println("       feature")
+		os.Exit(1)
+	}
+
+	currentBranch := getCurrentBranch()
+	if args[0] == "merge" {
+		mainMerge(currentBranch)
+
+	} else if args[0] == "feature" {
+		mainFeature(currentBranch)
+	}
+
 }
