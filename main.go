@@ -153,24 +153,60 @@ func mainMerge(currentBranch string) {
 	}
 }
 
-func mainFeature(currentBranch string) {
-	fmt.Printf("in mainFeature: %s\n", currentBranch)
+
+func mainFeature() {
+	// フィーチャー名を取得
+	featureName := "feature"
+	fmt.Printf("Enter a feature name. Default is [ %s ]. (default when omitted):\n", featureName)
+	inputtedFeatureName := getInput()
+    if inputtedFeatureName != "" {
+        featureName = inputtedFeatureName
+	}
+
+	fmt.Printf("Enter a feature branch name:\n")
+	featureBranchName := getInput()
+    if featureBranchName == "" {
+		fmt.Println("Please enter feature branch name.")
+		os.Exit(1)
+	}
+
+    // mainブランチを起点としてフィーチャーブランチを作成し、スイッチする
+	branchName := fmt.Sprintf("%s/%s", featureName, featureBranchName)
+ 	fmt.Printf("git switch -c %s main\n", branchName)
+	if err := exec.Command("git", "switch", "-c", branchName, "main").Run(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+    fmt.Printf("Created feature branch [ %s ] and switched to it.\n", branchName)
+}
+
+func usage() {
+	fmt.Println("Usage: merge")
+	fmt.Println("       feature")
 }
 
 func main() {
 	args := os.Args[1:]
 	if len(args) != 1 || (args[0] != "merge" && args[0] != "feature") {
-		fmt.Println("Usage: merge")
-		fmt.Println("       feature")
+		usage()
 		os.Exit(1)
 	}
 
-	currentBranch := getCurrentBranch()
-	if args[0] == "merge" {
+	// コマンドを取得
+	command := args[0]
+
+	if command == "merge" {
+		currentBranch := getCurrentBranch()
 		mainMerge(currentBranch)
+		os.Exit(0)
 
-	} else if args[0] == "feature" {
-		mainFeature(currentBranch)
+	} else if command == "feature" {
+		mainFeature()
+		os.Exit(0)
+
+	} else {
+		usage()
+		os.Exit(1)
 	}
-
 }
