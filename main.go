@@ -172,7 +172,7 @@ func mainFeature() {
 
     // mainブランチを起点としてフィーチャーブランチを作成し、スイッチする
 	branchName := fmt.Sprintf("%s/%s", featureName, featureBranchName)
- 	fmt.Printf("git switch -c %s main\n", branchName)
+ 	//fmt.Printf("git switch -c %s main\n", branchName)
 	if err := exec.Command("git", "switch", "-c", branchName, "main").Run(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
