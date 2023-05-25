@@ -172,13 +172,25 @@ func mainFeature() {
 
     // mainブランチを起点としてフィーチャーブランチを作成し、スイッチする
 	branchName := fmt.Sprintf("%s/%s", featureName, featureBranchName)
- 	//fmt.Printf("git switch -c %s main\n", branchName)
-	if err := exec.Command("git", "switch", "-c", branchName, "main").Run(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+
+	// すでに存在しているブランチだった場合、作成するのではなくswitchのみ実行する
+	if branchExists(branchName) {
+		fmt.Printf("Feature branch [ %s ] appears to already exist.\nOnly the switch is to be executed.\n", branchName)
+		if err := exec.Command("git", "switch", branchName).Run(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+	// ブランチが存在しない場合、作成してからswitch
+	} else {
+		//fmt.Printf("git switch -c %s main\n", branchName)
+		if err := exec.Command("git", "switch", "-c", branchName, "main").Run(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		fmt.Printf("Created feature branch [ %s ] and switched to it.\n", branchName)
 	}
 
-    fmt.Printf("Created feature branch [ %s ] and switched to it.\n", branchName)
 }
 
 func usage() {
